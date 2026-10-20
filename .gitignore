@@ -1,0 +1,23 @@
+# Dependencias y resultados generados por Next.js
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Configuración local y secretos
+.env
+.env.*
+!.env.example
+
+# Archivos del editor y del sistema operativo
+.vscode/
+.idea/
+.vs/
+Thumbs.db
+Desktop.ini
+
+# Material temporal de trabajo; los recursos publicados están en public/
+tmp/
