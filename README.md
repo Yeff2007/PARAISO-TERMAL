@@ -33,39 +33,6 @@ npm run build
 npm run start
 ```
 
-## Publicar el código en GitHub
-
-1. Crea un repositorio vacío en [GitHub](https://github.com/new). No agregues README, licencia ni `.gitignore` desde GitHub, porque este proyecto ya trae esos archivos.
-2. En PowerShell, abre la carpeta del proyecto y configura Git si todavía no lo has usado:
-
-   ```powershell
-   git config --global user.name "Tu nombre"
-   git config --global user.email "tu-correo@example.com"
-   ```
-
-3. Inicializa y sube el proyecto. Cambia `TU-USUARIO` y `NOMBRE-DEL-REPOSITORIO` por los que elegiste en GitHub:
-
-   ```powershell
-   git init
-   git add .
-   git status
-   git commit -m "Publica sitio de Paraíso Termal"
-   git branch -M main
-   git remote add origin https://github.com/TU-USUARIO/NOMBRE-DEL-REPOSITORIO.git
-   git push -u origin main
-   ```
-
-4. Antes de confirmar `git add`, revisa `git status`: `.env.local`, `.env` y `.env.*` no deben aparecer. `.env.example` sí debe aparecer y no debe contener secretos reales.
-5. Para cambios posteriores:
-
-   ```powershell
-   git add .
-   git commit -m "Describe el cambio"
-   git push
-   ```
-
-GitHub guardará el código, pero no ejecutará el sitio por sí solo. Para publicarlo en Internet, conecta ese repositorio a un hosting compatible con Next.js y configura allí `BACKEND_URL` y `WEB_CHECKOUT_SECRET` como variables privadas del servidor. Configura además `WEB_PUBLIC_URL` en el PMS con el dominio final del sitio, para que el retorno de pago vuelva a `/reserva/{code}`. No subas `.env.local`, claves de pago ni credenciales al repositorio.
-
 ## Documentación del proyecto
 
 - [Guía del proyecto](./GUIA_DEL_PROYECTO.md): páginas, componentes, recursos y flujo de datos.
