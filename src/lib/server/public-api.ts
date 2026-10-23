@@ -27,11 +27,16 @@ async function call<T>(path: string, init?: RequestInit, secret = false): Promis
   }
   const result = await response.json().catch(() => null) as { success?: boolean; data?: T; error?: { code?: string; message?: string } } | null;
   if (!response.ok || !result?.success || result.data === undefined) {
-    const allowedCodes = new Set(['PUBLIC_BOOKING', 'VALIDATION_ERROR', 'UNAUTHORIZED', 'GONE']);
-    const code = result?.error?.code && allowedCodes.has(result.error.code)
+    const code = result?.error?.code === 'VALIDATION_ERROR' || result?.error?.code === 'UNAUTHORIZED' || result?.error?.code === 'GONE'
       ? result.error.code as PublicApiError['code']
       : 'PUBLIC_BOOKING';
-    throw new PublicApiError(result?.error?.message || 'El sistema de reservas no pudo completar la solicitud.', response.status || 502, code);
+    const publicMessages: Record<PublicApiError['code'], string> = {
+      PUBLIC_BOOKING: 'El sistema de reservas no pudo completar la solicitud. Inténtalo más tarde.',
+      VALIDATION_ERROR: 'No se pudieron validar los datos de la reserva. Revísalos e inténtalo de nuevo.',
+      UNAUTHORIZED: 'El sistema de reservas no está disponible para esta operación. Contacta al hotel.',
+      GONE: 'Esta opción de reserva ya no está disponible. Actualiza la página e inténtalo de nuevo.',
+    };
+    throw new PublicApiError(publicMessages[code], response.status || 502, code);
   }
   return result.data;
 }

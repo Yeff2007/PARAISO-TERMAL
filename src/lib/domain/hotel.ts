@@ -16,3 +16,15 @@ export type ImageAsset = {
   title?: string;
   sortOrder?: number;
 };
+
+/** Datos ya usados como respaldo en la portada; la API pública del PMS no expone hotel/contacto. */
+export const paraisoHotelContent: HotelContent = {
+  id: 'paraiso-termal',
+  name: 'Paraíso Termal',
+  contact: {
+    phone: '+57 311 506 0379',
+    email: 'paraisotermal@hotmail.com',
+    address: 'Kilómetro 32, vía Machetá–Guateque, Boyacá, Colombia.',
+  },
+  location: { mapUrl: 'https://maps.google.com/?q=Paraiso+Termal+Macheta+Guateque' },
+};

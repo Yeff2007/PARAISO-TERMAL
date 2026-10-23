@@ -83,7 +83,7 @@ Los planes de hospedaje (`PER_NIGHT` o `PER_PERSON`) piden llegada/salida y cupo
 
 ### Resultado — `src/app/reserva/[code]/page.tsx`
 
-Consulta el checkout identificado por `code`. Vuelve a preguntar cada 4 segundos mientras está `OPEN`; cuando hay error temporal, reintenta en 6 segundos. Expone `PAID`, `FAILED`, `EXPIRED` y el caso `needsReview`. El retorno del navegador nunca es una confirmación de pago.
+Consulta el checkout identificado por `code`. Reintenta con espera progresiva mientras está `OPEN` o hay error temporal, detiene la consulta automática tras diez minutos y ofrece consulta manual. Expone `PAID`, `FAILED`, `EXPIRED` y el caso `needsReview`. El retorno del navegador nunca es una confirmación de pago.
 
 ### Layout — `src/app/layout.tsx`
 
@@ -156,9 +156,10 @@ No se usan los antiguos endpoints de reserva/pago que el documento marca como `4
 |---|---|---|
 | `BACKEND_URL` | Servidor del sitio | El documento indica el host `system.paraisotermal.com.co` sin esquema; se verificó que `https://system.paraisotermal.com.co` responde. En una copia local se usa `http://localhost:3001`. El código añade `/api/v1/public`. |
 | `WEB_CHECKOUT_SECRET` | Servidor del sitio y PMS | Mismo secreto en ambos, enviado como `X-Web-Secret`; debe solicitarse al administrador del PMS. No poner `NEXT_PUBLIC_`. |
+| `PMS_PAYMENT_ALLOWED_HOSTS` | Servidor del sitio | Lista de hosts exactos que devuelve el PMS en `paymentUrl`; debe confirmarla el administrador por entorno. Si está vacía, la web rechaza el checkout. No poner `NEXT_PUBLIC_`. |
 | `WEB_PUBLIC_URL` | Backend del PMS | Dominio público del sitio para que Wompi retorne a `/reserva/{code}`. No es variable de este frontend. |
 
-Las credenciales privadas de Wompi también pertenecen solamente al backend del PMS.
+Las credenciales privadas de Wompi y la integración del proveedor de pagos pertenecen solamente al backend del PMS. La web no guarda credenciales Wompi ni llama directamente a sus APIs.
 
 ## Desarrollo y publicación
 

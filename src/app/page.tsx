@@ -8,7 +8,7 @@ import HomeSearch from '@/components/HomeSearch';
 import RestaurantMenu from '@/components/RestaurantMenu';
 import ThermalWaterCarousel from '@/components/ThermalWaterCarousel';
 import { getPlans, type PublicPlan } from '@/lib/api';
-import type { HotelContent } from '@/lib/domain/hotel';
+import { paraisoHotelContent } from '@/lib/domain/hotel';
 
 const experiences = [
   { title: 'Piscinas termales', text: 'Sumérgete en aguas cálidas y regálate una pausa.', icon: Waves, image: 'Piscinas termales entre montañas', href: '#dna-agua' },
@@ -52,7 +52,7 @@ export default function HomePage() {
   const [pmsSpaPlans, setPmsSpaPlans] = useState<PublicPlan[]>([]);
   const [spaLoading, setSpaLoading] = useState(true);
   const [spaError, setSpaError] = useState('');
-  const [hotel] = useState<HotelContent | null>(null);
+  const hotel = paraisoHotelContent;
   const visibleGalleryItems = galleryItems.filter(item => galleryCategory === 'Todo' || item.category === galleryCategory);
   useEffect(() => {
     // Inicia el catálogo en cuanto monta la portada, antes de preparar rutas secundarias.
@@ -78,8 +78,8 @@ export default function HomePage() {
       })
       .finally(() => setSpaLoading(false));
   }, [router]);
-  const mapQuery = hotel?.location?.latitude != null && hotel.location.longitude != null ? `${hotel.location.latitude},${hotel.location.longitude}` : 'Paraiso+Termal+Macheta+Guateque';
-  const mapLink = hotel?.location?.mapUrl || `https://maps.google.com/?q=${mapQuery}`;
+  const mapQuery = hotel.location?.latitude != null && hotel.location.longitude != null ? `${hotel.location.latitude},${hotel.location.longitude}` : 'Paraiso+Termal+Macheta+Guateque';
+  const mapLink = hotel.location?.mapUrl || `https://maps.google.com/?q=${mapQuery}`;
 
   return <main>
     <header className="header"><a className="brand" href="#inicio"><span className="brand-symbol"><img className="brand-mark" src="/images/logo-eden-mark.svg" alt=""/></span><span className="brand-copy"><span className="brand-name">PARAÍSO TERMAL</span><small>NATURALEZA · BIENESTAR · DESCANSO</small></span></a>
@@ -87,7 +87,7 @@ export default function HomePage() {
       <nav className={menuOpen ? 'nav nav-open' : 'nav'}>{[['Inicio','#inicio'],['Habitaciones','/habitaciones'],['Experiencias','#experiencias'],['Arenero','#arenero'],['Restaurante','#restaurante'],['Promociones','#pasaportes'],['Galería','#galeria'],['Nosotros','#termales'],['Contacto','#llegar']].map(([label, href]) => href.startsWith('/') && href !== '/' ? <Link key={label} href={href} onClick={() => setMenuOpen(false)}>{label}</Link> : <a key={label} href={href} onClick={() => setMenuOpen(false)}>{label}</a>)}</nav>
       <div className="header-actions"><Link className="header-icon-link" href="/habitaciones" aria-label="Buscar habitaciones"><Search size={16}/></Link><Link className="header-icon-link" href="/reservar" aria-label="Iniciar reserva"><CalendarDays size={16}/></Link></div><Link className="gold-button header-button" href="/reservar">Reservar ahora <ArrowRight size={16}/></Link>
     </header>
-    <section className="hero" id="inicio"><ImagePlaceholder label="Piscinas termales entre montañas" imageUrl={hotel?.images?.[0]?.url} className="hero-photo" priority/><div className="hero-overlay"/><div className="hero-content"><span className="eyebrow gold-text">TU REFUGIO ENTRE MONTAÑAS</span><h1>Un lugar para<br/><em>desconectar y disfrutar.</em></h1><p className="hero-promo">{hotel?.description || <>No es solo una habitación: es despertar entre montañas, reconectar con la naturaleza y <em>regalarte descanso de verdad.</em></>}</p><HomeSearch mode="lodging"/><span className="location-label"><Compass size={15}/> Machetá–Guateque · Boyacá, Colombia</span></div><a className="scroll-label" href="#reservas">DESCUBRE PARAÍSO ↓</a></section>
+    <section className="hero" id="inicio"><ImagePlaceholder label="Piscinas termales entre montañas" imageUrl={hotel.images?.[0]?.url} className="hero-photo" priority/><div className="hero-overlay"/><div className="hero-content"><span className="eyebrow gold-text">TU REFUGIO ENTRE MONTAÑAS</span><h1>Un lugar para<br/><em>desconectar y disfrutar.</em></h1><p className="hero-promo">{hotel.description || <>No es solo una habitación: es despertar entre montañas, reconectar con la naturaleza y <em>regalarte descanso de verdad.</em></>}</p><HomeSearch mode="lodging"/><span className="location-label"><Compass size={15}/> Machetá–Guateque · Boyacá, Colombia</span></div><a className="scroll-label" href="#reservas">DESCUBRE PARAÍSO ↓</a></section>
     <section className="booking-wrap other-search-wrap" id="reservas"><div className="booking"><div className="booking-title"><div><span className="eyebrow">UN DÍA, UNA NOCHE O UN MOMENTO PARA TI</span><h2>¿Un día libre? Regálatelo bien.</h2><p>Agua termal, descanso y naturaleza: elige tu experiencia y consulta la tarifa para la fecha de tu visita.</p></div><span className="secure"><Check size={14}/> Tarifas consultadas al sistema de reservas</span></div><HomeSearch mode="experiences" plansLoading={spaLoading} plans={[...pmsPlans, ...pmsPassports].filter((plan) => plan.webSection !== 'HOSPEDAJE')}/></div></section>
     <section className="benefits" id="termales">{[{icon:Waves,title:'Aguas termales',text:'Agua mineral de origen natural'},{icon:Leaf,title:'Naturaleza',text:'Senderos para respirar profundo'},{icon:Sparkles,title:'Spa',text:'Cuidado y bienestar personal'},{icon:Utensils,title:'Gastronomía',text:'Sabores para disfrutar sin prisa'},{icon:Compass,title:'Experiencias únicas',text:'Vive momentos inolvidables'}].map(({icon:Icon,title,text})=><div key={title}><Icon/><b>{title}</b><span>{text}</span></div>)}</section>
     <ThermalWaterCarousel />

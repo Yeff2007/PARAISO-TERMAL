@@ -14,6 +14,9 @@ Sitio web adaptable a móvil y escritorio para presentar el hotel y consultar pl
 - Node.js 20 o posterior y npm.
 - Acceso al backend del PMS para consultar los datos en vivo.
 - `WEB_CHECKOUT_SECRET` proporcionado por el administrador del PMS para crear checkouts.
+- `PMS_PAYMENT_ALLOWED_HOSTS` confirmado por el administrador del PMS para validar el dominio exacto incluido en `paymentUrl`.
+
+La integración con Wompi u otro proveedor de pagos vive en el PMS. Esta web no solicita ni almacena credenciales del proveedor; recibe la URL de pago del endpoint de checkout del PMS y consulta allí el estado final.
 
 ## Ejecutar localmente en Windows
 

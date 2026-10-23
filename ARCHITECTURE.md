@@ -11,6 +11,8 @@ La aplicación no requiere el sitio público anterior para servir sus páginas: 
 - `GET plans`, `GET availability`, `POST quote` y `GET checkouts/{code}` son consultas públicas del API documentado.
 - El BFF protege el `POST checkouts` y agrega `X-Web-Secret` solo en el servidor.
 - El sitio no integra Wompi, no recibe webhooks ni interpreta el retorno del navegador como aprobación.
+- El BFF solo redirige a URLs HTTPS del host exacto configurado en `PMS_PAYMENT_ALLOWED_HOSTS`, que debe confirmar el administrador del PMS. La web no asume el dominio del proveedor que gestione el backend.
+- Producción debe añadir limitación distribuida en el proxy y pasar una cabecera de IP que este sobrescriba.
 - El estado autoritativo viene de `GET checkouts/{code}`. Solo `PAID` sin `needsReview` se presenta como reserva confirmada.
 - Las cotizaciones son informativas. El PMS recalcula el valor al crear el checkout.
 
