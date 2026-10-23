@@ -22,6 +22,7 @@ export default function ReservePage() {
   const [availability, setAvailability] = useState<PublicAvailability | null>(null); const [quote, setQuote] = useState<PublicQuote | null>(null); const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false); const [message, setMessage] = useState('');
   const appliedInitialQuery = useRef(false);
+  const checkoutInFlight = useRef(false);
   useEffect(() => {
     // Aplica el enlace directo al plan antes de consultar, para no hacer una petición extra a otra sección.
     if (!appliedInitialQuery.current) {
@@ -90,11 +91,14 @@ export default function ReservePage() {
   }
   /** Envía los datos al BFF; el PMS calcula el total final y entrega el link de pago. */
   async function checkout(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); if (!selected || !quote) return; const form = new FormData(event.currentTarget); setMessage('Creando el checkout seguro…'); setLoading(true);
+    event.preventDefault(); if (!selected || !quote || checkoutInFlight.current) return; checkoutInFlight.current = true; const form = new FormData(event.currentTarget); setMessage('Creando el checkout seguro…'); setLoading(true);
     try {
       const result = await createCheckout({ rateId: selected.id, checkIn, ...(isLodging ? { checkOut } : {}), adults: Number(adults), children: Number(children), specialRequests: String(form.get('specialRequests') || ''), guest: { firstName: String(form.get('firstName')), lastName: String(form.get('lastName')), email: String(form.get('email')), phone: String(form.get('phone')), documentType: String(form.get('documentType')) as 'CC'|'CE'|'PA'|'TI'|'NIT', documentId: String(form.get('documentId')) } });
-      if (!result.paymentUrl) throw new Error('El sistema no devolvió el enlace de pago.'); window.location.assign(result.paymentUrl);
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'No se pudo iniciar el checkout.'); setLoading(false); }
+      if (!result.paymentUrl) throw new Error('El sistema no devolvió el enlace de pago.');
+      const paymentUrl = new URL(result.paymentUrl);
+      if (paymentUrl.protocol !== 'https:' || paymentUrl.username || paymentUrl.password) throw new Error('El sistema devolvió un enlace de pago no válido.');
+      window.location.assign(paymentUrl.href);
+    } catch (error) { checkoutInFlight.current = false; setMessage(error instanceof Error ? error.message : 'No se pudo iniciar el checkout.'); setLoading(false); }
   }
   return <main className="inner-page reserve-page"><SiteHeader actionHref="/habitaciones" actionLabel="Ver habitaciones"/><section className="reserve-shell"><div className="reserve-top"><Link href="/"><ArrowLeft size={14}/> Volver al inicio</Link><span className="eyebrow">TU PRÓXIMA ESCAPADA</span><h1>{section === 'ARENERO' ? 'Un plan para los más pequeños' : 'Reserva tu estadía'}</h1><p>{section === 'ARENERO' ? 'Elige la fecha para disfrutar el arenero en familia. El PMS mostrará sus tarifas y cupos cuando se publique esta nueva sección.' : 'Elige tu habitación o plan, revisa fechas y consulta el precio actualizado con el sistema de reservas.'}</p></div>
     <div className="booking-steps reserve-steps" aria-label="Pasos de la reserva">{['Plan y fechas','Cotización','Titular','Pago'].map((label,index)=><div className={step > index + 1 ? 'complete' : step === index + 1 ? 'current' : ''} key={label}><span>{step > index + 1 ? <Check size={13}/> : index + 1}</span><b>{label}</b></div>)}</div>

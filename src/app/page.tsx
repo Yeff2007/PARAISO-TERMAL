@@ -77,7 +77,7 @@ export default function HomePage() {
         setSpaError(error instanceof Error ? error.message : 'No se pudieron cargar los servicios del hotel.');
       })
       .finally(() => setSpaLoading(false));
-  }, []);
+  }, [router]);
   const mapQuery = hotel?.location?.latitude != null && hotel.location.longitude != null ? `${hotel.location.latitude},${hotel.location.longitude}` : 'Paraiso+Termal+Macheta+Guateque';
   const mapLink = hotel?.location?.mapUrl || `https://maps.google.com/?q=${mapQuery}`;
 
